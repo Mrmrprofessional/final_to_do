@@ -5,11 +5,16 @@
         private $mark;
         private $id;
 
-        function __construct($description, $mark, $id = null)
+        function __construct($description, $mark = false, $id = null)
         {
             $this->description = $description;
             $this->mark = $mark;
             $this->id = $id;
+        }
+
+        function setMark($new_mark)
+        {
+            $this->mark = $new_mark;
         }
 
         function setDescription($new_description)
@@ -35,7 +40,7 @@
 
         function save()
         {
-              $GLOBALS['DB']->exec("INSERT INTO tasks (description, mark) VALUES ('{$this->getDescription()}' '{$this->getMark()}');");
+              $GLOBALS['DB']->exec("INSERT INTO tasks (description, mark) VALUES ('{$this->getDescription()}', {$this->getMark()});");
               $this->id = $GLOBALS['DB']->lastInsertId();
         }
 
@@ -75,6 +80,12 @@
         {
             $GLOBALS['DB']->exec("UPDATE tasks SET description = '{$new_description}' WHERE id = {$this->getId()};");
             $this->setDescription($new_description);
+        }
+
+        function updateMark($new_mark)
+        {
+            $GLOBALS['DB']->exec("UPDATE tasks SET mark = '{$new_mark}' WHERE id = {$this->getId()};");
+            $this->setMark($new_mark);
         }
 
         function delete()

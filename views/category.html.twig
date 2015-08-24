@@ -1,7 +1,7 @@
 <html>
 <head>
     <title>To Do List</title>
-</head>
+
 <body>
     <h1>{{ category.getName }}</h1>
 
@@ -9,7 +9,12 @@
         <p>Here are the tasks for this category:</p>
         <ul>
             {% for task in tasks %}
-                <li>{{ task.getDescription }}</li>
+                    <li><form action='/task_update' method="post">
+                        <input id="id" name="category_id" type="hidden" value="{{ category.getId }}">
+                        <input id="id" name="task_id" type="hidden" value="{{ task.getId }}">
+                        <input name="_method" type="hidden" value="patch">{{ task.getDescription }}, {{ task.getId }}
+                        <button type="submit" name="mark" value="1">Completed</button>
+                        </form></li>
             {% endfor %}
         </ul>
     {% endif %}

@@ -259,5 +259,26 @@
             $this->assertEquals([], $test_category->getTasks());
         }
 
+        function testUpdateMark()
+        {
+            $name = "Work stuff";
+            $id = 1;
+            $test_category = new Category($name, $id);
+            $test_category->save();
+
+            $description = "File reports";
+            $mark = FALSE;
+            $id2 = 2;
+            $test_task = new Task($description, $mark, $id2);
+            $test_task->save();
+
+            $new_mark = True;
+
+            $test_task->addCategory($test_category);
+            $test_task->updateMark($new_mark);
+
+            $this->assertEquals(TRUE, $test_task->getMark());
+        }
+
     }
 ?>

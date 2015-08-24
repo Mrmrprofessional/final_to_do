@@ -5,6 +5,10 @@
     require_once __DIR__."/../src/Task.php";
     require_once __DIR__."/../src/Category.php";
 
+
+    use Symfony\Component\Debug\Debug;
+    Debug::enable();
+
     $app = new Silex\Application();
 
     $server = 'mysql:host=localhost;dbname=to_do';
@@ -15,6 +19,9 @@
     $app->register(new Silex\Provider\TwigServiceProvider(), array(
         'twig.path' => __DIR__.'/../views'
     ));
+
+    use Symfony\Component\HttpFoundation\Request;
+    Request::enableHttpMethodParameterOverride();
 
     $app->get("/", function() use ($app) {
         return $app['twig']->render('index.html.twig', array('categories' => Category::getAll(), 'tasks' => Task::getAll()));
@@ -48,6 +55,9 @@
 
     $app->get("/categories/{id}", function($id) use ($app) {
         $category = Category::find($id);
+        $tasks = $category->getTasks();
+        var_dump($tasks[0]);
+        var_dump($tasks[1]);
         return $app['twig']->render('category.html.twig', array('category' => $category, 'tasks' => $category->getTasks(), 'all_tasks' => Task::getAll()));
     });
 
@@ -63,6 +73,17 @@
         $task = Task::find($_POST['task_id']);
         $task->addCategory($category);
         return $app['twig']->render('task.html.twig', array('task' => $task, 'tasks' => Task::getAll(), 'categories' => $task->getCategories(), 'all_categories' => Category::getAll()));
+    });
+
+
+    $app->patch("/task_update", function() use ($app) {
+        $mark = $_POST['mark'];
+        $task_id = $_POST['task_id'];
+        var_dump($mark);
+        $task = Task::find($task_id);
+        $task->updateMark($mark);
+        $category = Category::find($_POST['category_id']);
+        return $app['twig']->render('category.html.twig', array('category' => $category, 'tasks' => $category->getTasks()));
     });
 
     return $app;
